@@ -1,0 +1,1073 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Web Scraping Portfolio — Arham</title>
+<link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&family=Sora:wght@300;400;600;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0d14;
+    --surface: #111520;
+    --surface2: #181d2e;
+    --border: rgba(255,255,255,0.07);
+    --border2: rgba(255,255,255,0.12);
+    --accent: #4f9cf9;
+    --accent2: #7c5cfc;
+    --green: #22c55e;
+    --amber: #f59e0b;
+    --coral: #f87171;
+    --text: #e2e8f0;
+    --muted: #7a8599;
+    --mono: 'JetBrains Mono', monospace;
+    --sans: 'Sora', sans-serif;
+  }
+
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.7;
+    min-height: 100vh;
+  }
+
+  /* Grid noise texture overlay */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: 
+      linear-gradient(rgba(79,156,249,0.03) 1px, transparent 1px),
+      linear-gradient(90deg, rgba(79,156,249,0.03) 1px, transparent 1px);
+    background-size: 40px 40px;
+    pointer-events: none;
+    z-index: 0;
+  }
+
+  .wrap { max-width: 960px; margin: 0 auto; padding: 0 2rem; position: relative; z-index: 1; }
+
+  /* ── HERO ── */
+  header {
+    padding: 80px 0 60px;
+    border-bottom: 1px solid var(--border);
+  }
+
+  .hero-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: rgba(79,156,249,0.08);
+    border: 1px solid rgba(79,156,249,0.2);
+    border-radius: 100px;
+    padding: 6px 14px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    margin-bottom: 28px;
+  }
+
+  .hero-badge::before {
+    content: '';
+    width: 6px; height: 6px;
+    background: var(--green);
+    border-radius: 50%;
+    box-shadow: 0 0 8px var(--green);
+    animation: pulse 2s ease-in-out infinite;
+  }
+
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:0.4} }
+
+  h1 {
+    font-size: clamp(2rem, 5vw, 3.2rem);
+    font-weight: 700;
+    line-height: 1.15;
+    letter-spacing: -0.03em;
+    margin-bottom: 20px;
+  }
+
+  h1 span.grad {
+    background: linear-gradient(135deg, #4f9cf9 0%, #7c5cfc 50%, #f87171 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-desc {
+    font-size: 16px;
+    color: var(--muted);
+    max-width: 620px;
+    margin-bottom: 36px;
+    line-height: 1.8;
+  }
+
+  .tag-row { display: flex; flex-wrap: wrap; gap: 8px; margin-bottom: 40px; }
+
+  .tag {
+    font-family: var(--mono);
+    font-size: 11px;
+    padding: 4px 12px;
+    border-radius: 4px;
+    border: 1px solid var(--border2);
+    color: var(--muted);
+    letter-spacing: 0.04em;
+  }
+  .tag.blue { border-color: rgba(79,156,249,0.3); color: #4f9cf9; background: rgba(79,156,249,0.06); }
+  .tag.purple { border-color: rgba(124,92,252,0.3); color: #a78bfa; background: rgba(124,92,252,0.06); }
+  .tag.green { border-color: rgba(34,197,94,0.3); color: #4ade80; background: rgba(34,197,94,0.06); }
+  .tag.amber { border-color: rgba(245,158,11,0.3); color: #fbbf24; background: rgba(245,158,11,0.06); }
+
+  .stat-row {
+    display: flex;
+    gap: 40px;
+    flex-wrap: wrap;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+  }
+
+  .stat { }
+  .stat-n {
+    font-family: var(--mono);
+    font-size: 28px;
+    font-weight: 700;
+    color: var(--text);
+    letter-spacing: -0.02em;
+    display: block;
+  }
+  .stat-n span { color: var(--accent); }
+  .stat-l { font-size: 12px; color: var(--muted); text-transform: uppercase; letter-spacing: 0.08em; margin-top: 2px; }
+
+  /* ── SECTIONS ── */
+  section { padding: 64px 0; border-bottom: 1px solid var(--border); }
+
+  .section-label {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 0.1em;
+    margin-bottom: 12px;
+  }
+
+  h2 {
+    font-size: 1.75rem;
+    font-weight: 700;
+    letter-spacing: -0.02em;
+    margin-bottom: 8px;
+  }
+
+  .section-sub {
+    color: var(--muted);
+    font-size: 14px;
+    margin-bottom: 40px;
+  }
+
+  /* ── PROJECT CARDS ── */
+  .project-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    overflow: hidden;
+    margin-bottom: 32px;
+    transition: border-color 0.2s;
+  }
+  .project-card:hover { border-color: var(--border2); }
+
+  .card-header {
+    padding: 28px 32px 24px;
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: flex-start;
+    gap: 20px;
+  }
+
+  .card-icon {
+    width: 48px; height: 48px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 22px;
+    flex-shrink: 0;
+  }
+  .icon-blue { background: rgba(79,156,249,0.12); border: 1px solid rgba(79,156,249,0.2); }
+  .icon-purple { background: rgba(124,92,252,0.12); border: 1px solid rgba(124,92,252,0.2); }
+
+  .card-meta { flex: 1; }
+  .card-title { font-size: 1.2rem; font-weight: 700; margin-bottom: 6px; letter-spacing: -0.01em; }
+  .card-sub { font-size: 13px; color: var(--muted); line-height: 1.6; }
+
+  .card-badges { display: flex; gap: 6px; flex-wrap: wrap; margin-top: 12px; }
+  .badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    padding: 3px 10px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .card-body { padding: 28px 32px; }
+
+  .feature-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 16px;
+    margin-bottom: 28px;
+  }
+
+  .feature {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 16px 18px;
+  }
+
+  .feature-title {
+    font-size: 13px;
+    font-weight: 600;
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  .dot {
+    width: 7px; height: 7px;
+    border-radius: 50%;
+    flex-shrink: 0;
+  }
+  .dot-blue { background: var(--accent); }
+  .dot-green { background: var(--green); }
+  .dot-amber { background: var(--amber); }
+  .dot-purple { background: var(--accent2); }
+  .dot-coral { background: var(--coral); }
+
+  .feature-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  /* ── PIPELINE FLOW ── */
+  .pipeline {
+    display: flex;
+    align-items: center;
+    gap: 0;
+    overflow-x: auto;
+    padding: 4px 0 16px;
+    margin-bottom: 8px;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  .pipeline::-webkit-scrollbar { height: 3px; }
+  .pipeline::-webkit-scrollbar-track { background: transparent; }
+  .pipeline::-webkit-scrollbar-thumb { background: var(--border2); border-radius: 2px; }
+
+  .p-step {
+    flex-shrink: 0;
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 10px 16px;
+    font-size: 12px;
+    font-family: var(--mono);
+    color: var(--text);
+    white-space: nowrap;
+    position: relative;
+  }
+
+  .p-step.accent-blue { border-color: rgba(79,156,249,0.3); color: var(--accent); background: rgba(79,156,249,0.06); }
+  .p-step.accent-purple { border-color: rgba(124,92,252,0.3); color: #a78bfa; background: rgba(124,92,252,0.06); }
+  .p-step.accent-green { border-color: rgba(34,197,94,0.3); color: #4ade80; background: rgba(34,197,94,0.06); }
+  .p-step.accent-amber { border-color: rgba(245,158,11,0.3); color: #fbbf24; background: rgba(245,158,11,0.06); }
+
+  .p-arrow {
+    color: var(--muted);
+    font-size: 16px;
+    padding: 0 6px;
+    flex-shrink: 0;
+  }
+
+  /* ── CAPTCHA CALLOUT ── */
+  .captcha-callout {
+    background: linear-gradient(135deg, rgba(124,92,252,0.08) 0%, rgba(79,156,249,0.05) 100%);
+    border: 1px solid rgba(124,92,252,0.25);
+    border-radius: 12px;
+    padding: 24px 28px;
+    margin: 28px 0;
+    position: relative;
+    overflow: hidden;
+  }
+
+  .captcha-callout::before {
+    content: '';
+    position: absolute;
+    top: 0; left: 0; right: 0;
+    height: 2px;
+    background: linear-gradient(90deg, var(--accent2), var(--accent));
+  }
+
+  .captcha-callout h3 {
+    font-size: 15px;
+    font-weight: 700;
+    margin-bottom: 10px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .hard-badge {
+    font-family: var(--mono);
+    font-size: 10px;
+    background: rgba(248,113,113,0.15);
+    border: 1px solid rgba(248,113,113,0.3);
+    color: var(--coral);
+    padding: 2px 8px;
+    border-radius: 3px;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+  }
+
+  .captcha-callout p { font-size: 13px; color: var(--muted); margin-bottom: 12px; }
+
+  .captcha-steps {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 12px;
+    margin-top: 16px;
+  }
+
+  .c-step {
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 12px 14px;
+  }
+
+  .c-step-n {
+    font-family: var(--mono);
+    font-size: 20px;
+    font-weight: 700;
+    color: var(--accent2);
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .c-step-t { font-size: 12px; font-weight: 600; margin-bottom: 2px; }
+  .c-step-d { font-size: 11px; color: var(--muted); line-height: 1.5; }
+
+  /* ── CODE BLOCK ── */
+  .code-block {
+    background: #0d1117;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    overflow: hidden;
+    margin: 20px 0;
+  }
+
+  .code-header {
+    background: var(--surface);
+    border-bottom: 1px solid var(--border);
+    padding: 10px 16px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--muted);
+  }
+
+  .code-dot { width: 10px; height: 10px; border-radius: 50%; }
+
+  pre {
+    font-family: var(--mono);
+    font-size: 12px;
+    padding: 20px;
+    overflow-x: auto;
+    line-height: 1.7;
+    color: #c9d1d9;
+  }
+
+  .kw { color: #ff7b72; }
+  .fn { color: #d2a8ff; }
+  .str { color: #a5d6ff; }
+  .cm { color: #8b949e; font-style: italic; }
+  .num { color: #79c0ff; }
+  .var { color: #ffa657; }
+
+  /* ── TECH STACK ── */
+  .tech-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+    gap: 12px;
+  }
+
+  .tech-item {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 14px 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    transition: border-color 0.15s;
+  }
+  .tech-item:hover { border-color: var(--border2); }
+
+  .tech-name { font-size: 13px; font-weight: 600; }
+  .tech-purpose { font-size: 11px; color: var(--muted); }
+
+  /* ── ARCH DIAGRAM ── */
+  .arch-diagram {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 16px;
+    padding: 32px;
+    margin: 28px 0;
+  }
+
+  .arch-row {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 12px;
+    margin-bottom: 16px;
+    flex-wrap: wrap;
+  }
+
+  .arch-node {
+    border-radius: 10px;
+    padding: 12px 20px;
+    font-family: var(--mono);
+    font-size: 12px;
+    text-align: center;
+    min-width: 120px;
+  }
+
+  .arch-down {
+    width: 1px;
+    height: 28px;
+    background: var(--border2);
+    margin: 0 auto;
+    position: relative;
+  }
+  .arch-down::after {
+    content: '';
+    position: absolute;
+    bottom: -5px; left: -4px;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 7px solid var(--border2);
+  }
+
+  .arch-right {
+    width: 28px; height: 1px;
+    background: var(--border2);
+    flex-shrink: 0;
+    position: relative;
+  }
+  .arch-right::after {
+    content: '';
+    position: absolute;
+    right: -5px; top: -4px;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 7px solid var(--border2);
+  }
+
+  /* ── ANTI-DETECTION SECTION ── */
+  .detection-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+  }
+  @media (max-width: 640px) { .detection-grid { grid-template-columns: 1fr; } }
+
+  .d-card {
+    background: var(--surface2);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    padding: 18px 20px;
+  }
+
+  .d-label {
+    font-family: var(--mono);
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-bottom: 6px;
+    color: var(--muted);
+  }
+
+  .d-title { font-size: 13px; font-weight: 600; margin-bottom: 8px; }
+  .d-desc { font-size: 12px; color: var(--muted); line-height: 1.6; }
+
+  /* ── RESULTS ── */
+  .results-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 16px;
+    margin-bottom: 32px;
+  }
+
+  .result-card {
+    background: var(--surface);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    padding: 20px;
+    text-align: center;
+  }
+
+  .result-n {
+    font-family: var(--mono);
+    font-size: 32px;
+    font-weight: 700;
+    letter-spacing: -0.03em;
+    display: block;
+    margin-bottom: 4px;
+  }
+
+  .result-l { font-size: 12px; color: var(--muted); }
+
+  /* ── FOOTER ── */
+  footer {
+    padding: 48px 0;
+    text-align: center;
+    color: var(--muted);
+    font-size: 13px;
+  }
+
+  footer a { color: var(--accent); text-decoration: none; }
+
+  /* ── UTILITY ── */
+  .mono { font-family: var(--mono); }
+  .divider { border: none; border-top: 1px solid var(--border); margin: 28px 0; }
+
+  @media (max-width: 640px) {
+    .card-header { flex-direction: column; gap: 12px; }
+    .card-body { padding: 20px; }
+    .card-header { padding: 20px; }
+    .stat-row { gap: 24px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="wrap">
+
+  <!-- ── HERO ── -->
+  <header>
+    <div class="hero-badge">Production Web Scraping</div>
+    <h1>
+      Enterprise-grade<br>
+      <span class="grad">data extraction pipelines</span>
+    </h1>
+    <p class="hero-desc">
+      Two production scrapers built for a commercial real estate intelligence firm — bypassing 
+      PerimeterX bot protection, scraping 50 US states on Zillow, and routing structured data to CRMs 
+      via Zapier webhooks. Both are deployed and running on live infrastructure.
+    </p>
+    <div class="tag-row">
+      <span class="tag blue">Python</span>
+      <span class="tag blue">Selenium</span>
+      <span class="tag purple">undetected-chromedriver</span>
+      <span class="tag green">BeautifulSoup4</span>
+      <span class="tag amber">Zapier Webhooks</span>
+      <span class="tag blue">openpyxl</span>
+      <span class="tag purple">PerimeterX Bypass</span>
+      <span class="tag green">Ubuntu / Xvfb</span>
+    </div>
+    <div class="stat-row">
+      <div class="stat">
+        <span class="stat-n"><span>2</span></span>
+        <div class="stat-l">Production scrapers</div>
+      </div>
+      <div class="stat">
+        <span class="stat-n"><span>50</span></span>
+        <div class="stat-l">US states covered</div>
+      </div>
+      <div class="stat">
+        <span class="stat-n"><span>$7M+</span></span>
+        <div class="stat-l">Listings min. price filter</div>
+      </div>
+      <div class="stat">
+        <span class="stat-n"><span>100%</span></span>
+        <div class="stat-l">Automated pipeline</div>
+      </div>
+    </div>
+  </header>
+
+  <!-- ── PROJECT 1: COMMERCIAL OBSERVER ── -->
+  <section>
+    <div class="section-label">Project 01</div>
+    <h2>Commercial Observer Scraper</h2>
+    <p class="section-sub">Targeted article extraction with intelligent category filtering → Zapier CRM pipeline</p>
+
+    <div class="project-card">
+      <div class="card-header">
+        <div class="card-icon icon-blue">📰</div>
+        <div class="card-meta">
+          <div class="card-title">Office Lease Article Extractor</div>
+          <div class="card-sub">
+            Logs into a paywalled publication, crawls monthly archive pages, filters articles 
+            to Office Leases category only, extracts structured content, and fires it to Zapier.
+          </div>
+          <div class="card-badges">
+            <span class="badge tag blue">Selenium</span>
+            <span class="badge tag green">BeautifulSoup4</span>
+            <span class="badge tag amber">Zapier POST</span>
+            <span class="badge tag blue">openpyxl dedup</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+
+        <!-- Pipeline -->
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em;">Data pipeline</p>
+        <div class="pipeline">
+          <div class="p-step accent-blue">Login (cookie-bypass)</div>
+          <div class="p-arrow">→</div>
+          <div class="p-step">Archive crawl</div>
+          <div class="p-arrow">→</div>
+          <div class="p-step">Article links</div>
+          <div class="p-arrow">→</div>
+          <div class="p-step accent-amber">Category filter</div>
+          <div class="p-arrow">→</div>
+          <div class="p-step">Content extract</div>
+          <div class="p-arrow">→</div>
+          <div class="p-step accent-green">Zapier POST</div>
+          <div class="p-arrow">→</div>
+          <div class="p-step">Excel dedup log</div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Features -->
+        <div class="feature-grid">
+          <div class="feature">
+            <div class="feature-title"><div class="dot dot-blue"></div>Smart Category Filtering</div>
+            <div class="feature-desc">
+              Strips global site nav before checking category — nav links to "Office Leases" were causing false positives 
+              on every page. Decompose nav/header/footer first, then check 12 CSS selectors with fallback to full-page scan.
+            </div>
+          </div>
+          <div class="feature">
+            <div class="feature-title"><div class="dot dot-green"></div>Authenticated Session</div>
+            <div class="feature-desc">
+              Handles cookie consent banners, iframe-embedded login forms, and multiple login field selector patterns 
+              to reliably sign in to the paywalled site.
+            </div>
+          </div>
+          <div class="feature">
+            <div class="feature-title"><div class="dot dot-amber"></div>Idempotent Re-runs</div>
+            <div class="feature-desc">
+              Maintains a persistent Excel log of processed URLs. Re-running the scraper safely skips already-processed 
+              articles. Dynamic month targeting — defaults to current month.
+            </div>
+          </div>
+          <div class="feature">
+            <div class="feature-title"><div class="dot dot-purple"></div>Robust Error Handling</div>
+            <div class="feature-desc">
+              Per-article retry logic with backoff for Selenium timeouts. Webhook retries (3x) 
+              with 2s delay. Structured logging with timestamps at INFO/WARNING/ERROR levels.
+            </div>
+          </div>
+        </div>
+
+        <!-- Key technical callout -->
+        <div style="background:rgba(79,156,249,0.05);border:1px solid rgba(79,156,249,0.15);border-radius:10px;padding:20px 24px;margin-top:8px;">
+          <div style="font-size:13px;font-weight:600;margin-bottom:8px;display:flex;align-items:center;gap:8px;">
+            🔍 <span>Key engineering insight — false positive prevention</span>
+          </div>
+          <p style="font-size:13px;color:var(--muted);line-height:1.7;">
+            The "Office Leases" link appears in the site nav on <em>every</em> page — a naive search would mark 
+            every article as matching. The fix: before any category check, decompose all 
+            <code style="font-family:var(--mono);font-size:11px;background:rgba(255,255,255,0.05);padding:1px 6px;border-radius:3px;">nav</code>, 
+            <code style="font-family:var(--mono);font-size:11px;background:rgba(255,255,255,0.05);padding:1px 6px;border-radius:3px;">header</code>, 
+            <code style="font-family:var(--mono);font-size:11px;background:rgba(255,255,255,0.05);padding:1px 6px;border-radius:3px;">footer</code>, 
+            and sidebar elements from the BeautifulSoup tree. Only then run the category selector chain. 
+            Results went from 100% false-positive to near-zero.
+          </p>
+        </div>
+
+        <!-- Code snippet -->
+        <div class="code-block" style="margin-top:20px;">
+          <div class="code-header">
+            <div class="code-dot" style="background:#ff5f57"></div>
+            <div class="code-dot" style="background:#febc2e"></div>
+            <div class="code-dot" style="background:#28c840"></div>
+            <span style="margin-left:8px;">co_scraper.py — is_office_lease_article()</span>
+          </div>
+          <pre><span class="kw">def</span> <span class="fn">is_office_lease_article</span>(soup: BeautifulSoup) -> bool:
+    <span class="cm"># Step 1: strip global nav to prevent false positives</span>
+    <span class="kw">for</span> tag <span class="kw">in</span> soup.find_all([<span class="str">"nav"</span>, <span class="str">"header"</span>, <span class="str">"footer"</span>, <span class="str">"aside"</span>]):
+        tag.decompose()
+
+    <span class="cm"># Step 2: check known article-category containers</span>
+    CATEGORY_SELECTORS = [
+        <span class="str">"div.leases-label"</span>, <span class="str">"div.channel"</span>,
+        <span class="str">"div.article-category"</span>, <span class="str">"ul.post-categories"</span>,
+    ]
+    <span class="kw">for</span> selector <span class="kw">in</span> CATEGORY_SELECTORS:
+        container = soup.select_one(selector)
+        <span class="kw">if</span> container:
+            <span class="kw">for</span> a <span class="kw">in</span> container.find_all(<span class="str">"a"</span>, href=<span class="kw">True</span>):
+                <span class="kw">if</span> a[<span class="str">"href"</span>].endswith(<span class="str">"/leases/office"</span>):
+                    <span class="kw">return True</span>
+
+    <span class="cm"># Step 3: fallback full-page scan (chrome-stripped)</span>
+    <span class="kw">for</span> a <span class="kw">in</span> soup.find_all(<span class="str">"a"</span>, href=<span class="kw">True</span>):
+        <span class="kw">if</span> a[<span class="str">"href"</span>].endswith(<span class="str">"/leases/office"</span>):
+            <span class="kw">return True</span>
+    <span class="kw">return False</span></pre>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── PROJECT 2: ZILLOW ── -->
+  <section>
+    <div class="section-label">Project 02</div>
+    <h2>Zillow Active Listings Scraper</h2>
+    <p class="section-sub">All 50 US states · PerimeterX CAPTCHA bypass · $7M+ property filter · agent contact extraction</p>
+
+    <div class="project-card">
+      <div class="card-header">
+        <div class="card-icon icon-purple">🏠</div>
+        <div class="card-meta">
+          <div class="card-title">Multi-State Property Intelligence Scraper</div>
+          <div class="card-sub">
+            Scrapes active for-sale luxury listings across all 50 US states. Uses undetected-chromedriver 
+            to bypass PerimeterX bot detection, handles Press &amp; Hold CAPTCHAs programmatically, 
+            extracts full agent contact info, and ships data to Zapier via GET webhooks.
+          </div>
+          <div class="card-badges">
+            <span class="badge tag purple">undetected-chromedriver</span>
+            <span class="badge tag blue">PerimeterX bypass</span>
+            <span class="badge tag amber">CDP mouse emulation</span>
+            <span class="badge tag green">50 states</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="card-body">
+
+        <!-- Pipeline -->
+        <p style="font-size:12px;color:var(--muted);margin-bottom:12px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em;">Data pipeline</p>
+        <div class="pipeline">
+          <div class="p-step accent-purple">Xvfb headless</div>
+          <div class="p-arrow">→</div>
+          <div class="p-step">State URL gen</div>
+          <div class="p-arrow">→</div>
+          <div class="p-step accent-purple">CAPTCHA check</div>
+          <div class="p-arrow">→</div>
+          <div class="p-step">Multi-page crawl</div>
+          <div class="p-arrow">→</div>
+          <div class="p-step">ZPID dedup</div>
+          <div class="p-arrow">→</div>
+          <div class="p-step">Listing scrape</div>
+          <div class="p-arrow">→</div>
+          <div class="p-step accent-green">Zapier GET</div>
+          <div class="p-arrow">→</div>
+          <div class="p-step">Excel log</div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- CAPTCHA callout — main highlight -->
+        <div class="captcha-callout">
+          <h3>
+            PerimeterX Press &amp; Hold CAPTCHA solver
+            <span class="hard-badge">Hard problem</span>
+          </h3>
+          <p>
+            Zillow deploys PerimeterX bot protection with a "Press &amp; Hold" CAPTCHA — users must hold 
+            a button for 10–15 seconds to prove they're human. This is designed to defeat automated 
+            clicking. Solved using Chrome DevTools Protocol (CDP) mouse event injection.
+          </p>
+
+          <div class="captcha-steps">
+            <div class="c-step">
+              <span class="c-step-n">01</span>
+              <div class="c-step-t">Detection</div>
+              <div class="c-step-d">Scan page source and DOM for "press &amp; hold", "before we continue", PerimeterX element IDs. Check iframes too.</div>
+            </div>
+            <div class="c-step">
+              <span class="c-step-n">02</span>
+              <div class="c-step-t">Human mouse path</div>
+              <div class="c-step-d">8–15 step cubic ease-in-out mouse movement toward button center with ±2px jitter per step via CDP.</div>
+            </div>
+            <div class="c-step">
+              <span class="c-step-n">03</span>
+              <div class="c-step-t">CDP hold</div>
+              <div class="c-step-d"><code style="font-family:var(--mono);font-size:10px;">Input.dispatchMouseEvent</code> mousePressed + real-time logging + mouseReleased after 12–16s.</div>
+            </div>
+            <div class="c-step">
+              <span class="c-step-n">04</span>
+              <div class="c-step-t">Fallback chain</div>
+              <div class="c-step-d">5 auto-attempts → 5-minute manual solve window → URL saved to captcha_blocked.json for retry.</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Code snippet -->
+        <div class="code-block">
+          <div class="code-header">
+            <div class="code-dot" style="background:#ff5f57"></div>
+            <div class="code-dot" style="background:#febc2e"></div>
+            <div class="code-dot" style="background:#28c840"></div>
+            <span style="margin-left:8px;">zillow_scraper.py — CDP mouse hold</span>
+          </div>
+          <pre><span class="cm"># Human-like mouse path toward CAPTCHA button (cubic easing)</span>
+<span class="kw">for</span> step <span class="kw">in</span> range(steps):
+    t = (step + <span class="num">1</span>) / steps
+    t = t * t * (<span class="num">3</span> - <span class="num">2</span> * t)  <span class="cm"># smoothstep</span>
+    mx = start_x + (cx - start_x) * t + random.uniform(<span class="num">-2</span>, <span class="num">2</span>)
+    my = start_y + (cy - start_y) * t + random.uniform(<span class="num">-2</span>, <span class="num">2</span>)
+    driver.execute_cdp_cmd(<span class="str">'Input.dispatchMouseEvent'</span>, {
+        <span class="str">'type'</span>: <span class="str">'mouseMoved'</span>, <span class="str">'x'</span>: mx, <span class="str">'y'</span>: my,
+        <span class="str">'pointerType'</span>: <span class="str">'mouse'</span>
+    })
+    time.sleep(random.uniform(<span class="num">0.01</span>, <span class="num">0.04</span>))
+
+<span class="cm"># Hold mousePressed for 12–16 seconds with real-time countdown</span>
+hold_duration = random.uniform(<span class="num">12</span>, <span class="num">16</span>)
+driver.execute_cdp_cmd(<span class="str">'Input.dispatchMouseEvent'</span>, {
+    <span class="str">'type'</span>: <span class="str">'mousePressed'</span>, <span class="str">'x'</span>: cx, <span class="str">'y'</span>: cy,
+    <span class="str">'button'</span>: <span class="str">'left'</span>, <span class="str">'clickCount'</span>: <span class="num">1</span>
+})
+<span class="kw">while</span> time.time() - start_time < hold_duration:
+    time.sleep(<span class="num">0.5</span>)  <span class="cm"># log elapsed every second</span>
+
+driver.execute_cdp_cmd(<span class="str">'Input.dispatchMouseEvent'</span>, {<span class="str">'type'</span>: <span class="str">'mouseReleased'</span>, ...})</pre>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Anti-detection features -->
+        <p style="font-size:12px;color:var(--muted);margin-bottom:16px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em;">Anti-detection techniques</p>
+
+        <div class="detection-grid">
+          <div class="d-card">
+            <div class="d-label">Fingerprint</div>
+            <div class="d-title">undetected-chromedriver</div>
+            <div class="d-desc">Patches Chrome binary to remove all automation fingerprints. Removes webdriver navigator property and automation switches that PerimeterX detects.</div>
+          </div>
+          <div class="d-card">
+            <div class="d-label">Timing</div>
+            <div class="d-title">Randomised delays</div>
+            <div class="d-desc">All waits use <code style="font-family:var(--mono);font-size:10px;">random.uniform(min, max)</code>. Page loads: 2–4s. Between listings: 3–6s. Between states: 10–20s. Bulk break every 5 listings.</div>
+          </div>
+          <div class="d-card">
+            <div class="d-label">User agent</div>
+            <div class="d-title">UA rotation pool</div>
+            <div class="d-desc">Pool of 4 real Chrome UAs (macOS, Windows, Linux variants) selected randomly per driver session.</div>
+          </div>
+          <div class="d-card">
+            <div class="d-label">Display</div>
+            <div class="d-title">Xvfb virtual display</div>
+            <div class="d-desc">Runs a real X11 display server on Ubuntu so Chrome operates as a true desktop browser, not a headless session. Harder for fingerprinting to detect.</div>
+          </div>
+        </div>
+
+        <hr class="divider">
+
+        <!-- Data extracted -->
+        <p style="font-size:12px;color:var(--muted);margin-bottom:16px;font-family:var(--mono);text-transform:uppercase;letter-spacing:0.08em;">Fields extracted per listing</p>
+
+        <div class="feature-grid">
+          <div class="feature">
+            <div class="feature-title"><div class="dot dot-blue"></div>Property data</div>
+            <div class="feature-desc">Address, city, state, ZIP, price, beds, baths, sqft, price/sqft, lot size, property type, year built, MLS ID, days on Zillow</div>
+          </div>
+          <div class="feature">
+            <div class="feature-title"><div class="dot dot-amber"></div>Engagement metrics</div>
+            <div class="feature-desc">Views count, saves count, listed date — real-time demand signals for each property</div>
+          </div>
+          <div class="feature">
+            <div class="feature-title"><div class="dot dot-green"></div>Agent contact info</div>
+            <div class="feature-desc">Agent name, email, phone, company — parsed from 3 regex patterns with keyword-based fallback extraction</div>
+          </div>
+          <div class="feature">
+            <div class="feature-title"><div class="dot dot-coral"></div>Smart deduplication</div>
+            <div class="feature-desc">ZPID-based tracking (not URL string matching) — immune to URL parameter, casing, and trailing slash variations. Persisted to Excel.</div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── TECH STACK ── -->
+  <section>
+    <div class="section-label">Stack</div>
+    <h2>Technology used</h2>
+    <p class="section-sub">All Python, running on Ubuntu 24 LTS</p>
+
+    <div class="tech-grid">
+      <div class="tech-item">
+        <div class="tech-name" style="color:var(--accent)">Selenium</div>
+        <div class="tech-purpose">Browser automation</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-name" style="color:#a78bfa">undetected-chromedriver</div>
+        <div class="tech-purpose">Anti-fingerprint Chrome</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-name" style="color:var(--green)">BeautifulSoup4</div>
+        <div class="tech-purpose">HTML parsing</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-name" style="color:var(--amber)">requests</div>
+        <div class="tech-purpose">Webhook delivery</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-name" style="color:var(--accent)">openpyxl</div>
+        <div class="tech-purpose">Excel URL tracking</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-name" style="color:#a78bfa">Chrome DevTools Protocol</div>
+        <div class="tech-purpose">CAPTCHA mouse events</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-name" style="color:var(--green)">Xvfb</div>
+        <div class="tech-purpose">Virtual X11 display</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-name" style="color:var(--amber)">Zapier</div>
+        <div class="tech-purpose">CRM webhook routing</div>
+      </div>
+      <div class="tech-item">
+        <div class="tech-name" style="color:var(--accent)">logging</div>
+        <div class="tech-purpose">Structured log output</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── ARCHITECTURE ── -->
+  <section>
+    <div class="section-label">Architecture</div>
+    <h2>System design</h2>
+    <p class="section-sub">Both scrapers follow a shared pattern: collect → filter → extract → deliver → log</p>
+
+    <div class="arch-diagram">
+      <div class="arch-row">
+        <div class="arch-node" style="background:rgba(79,156,249,0.1);border:1px solid rgba(79,156,249,0.25);color:var(--accent);">
+          🌐 Target site
+        </div>
+      </div>
+      <div class="arch-down" style="margin:0 auto;"></div>
+      <div class="arch-row">
+        <div class="arch-node" style="background:rgba(124,92,252,0.1);border:1px solid rgba(124,92,252,0.25);color:#a78bfa;">
+          🤖 undetected Chrome<br><span style="font-size:10px;color:var(--muted);">Xvfb + CDP</span>
+        </div>
+      </div>
+      <div class="arch-down" style="margin:0 auto;"></div>
+      <div class="arch-row">
+        <div class="arch-node" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:var(--amber);">
+          🔒 CAPTCHA solver
+        </div>
+        <div class="arch-right"></div>
+        <div class="arch-node" style="background:rgba(34,197,94,0.1);border:1px solid rgba(34,197,94,0.25);color:var(--green);">
+          🔍 Category filter
+        </div>
+      </div>
+      <div class="arch-down" style="margin:0 auto;"></div>
+      <div class="arch-row">
+        <div class="arch-node" style="background:rgba(79,156,249,0.1);border:1px solid rgba(79,156,249,0.25);color:var(--accent);">
+          📦 Data extraction<br><span style="font-size:10px;color:var(--muted);">BS4 + regex</span>
+        </div>
+      </div>
+      <div class="arch-down" style="margin:0 auto;"></div>
+      <div class="arch-row">
+        <div class="arch-node" style="background:rgba(245,158,11,0.1);border:1px solid rgba(245,158,11,0.25);color:var(--amber);">
+          ⚡ Zapier webhook<br><span style="font-size:10px;color:var(--muted);">POST / GET params</span>
+        </div>
+        <div class="arch-right"></div>
+        <div class="arch-node" style="background:var(--surface2);border:1px solid var(--border);color:var(--muted);">
+          📊 Excel dedup log<br><span style="font-size:10px;">ZPID / URL tracking</span>
+        </div>
+      </div>
+      <div style="text-align:center;margin-top:16px;">
+        <div class="arch-down" style="margin:0 auto;"></div>
+        <div class="arch-node" style="background:rgba(34,197,94,0.08);border:1px solid rgba(34,197,94,0.2);color:var(--green);display:inline-block;">
+          🏢 CRM / Database
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── WHAT I LEARNED ── -->
+  <section>
+    <div class="section-label">Engineering notes</div>
+    <h2>Challenges solved</h2>
+    <p class="section-sub">Real problems encountered and how they were addressed</p>
+
+    <div style="display:flex;flex-direction:column;gap:16px;">
+      <div class="d-card" style="padding:20px 24px;">
+        <div class="d-title" style="display:flex;align-items:center;gap:10px;font-size:14px;">
+          <span style="color:var(--coral);font-family:var(--mono);">01</span>
+          PerimeterX defeating normal Selenium
+        </div>
+        <div class="d-desc" style="margin-top:6px;font-size:13px;">
+          Standard ChromeDriver is trivially detected by PerimeterX via <code style="font-family:var(--mono);font-size:11px;">navigator.webdriver</code> and automation 
+          attribute fingerprints. Switched to <strong>undetected-chromedriver</strong> which patches the binary 
+          directly. Combined with Xvfb for a real X11 environment and randomised user-agents.
+        </div>
+      </div>
+
+      <div class="d-card" style="padding:20px 24px;">
+        <div class="d-title" style="display:flex;align-items:center;gap:10px;font-size:14px;">
+          <span style="color:var(--amber);font-family:var(--mono);">02</span>
+          "Press &amp; Hold" CAPTCHA — no third-party service
+        </div>
+        <div class="d-desc" style="margin-top:6px;font-size:13px;">
+          This CAPTCHA can't be solved by 2Captcha or similar services — it requires a genuine sustained 
+          mouse button hold. Used CDP's <code style="font-family:var(--mono);font-size:11px;">Input.dispatchMouseEvent</code> to inject mousePressed, 
+          wait 12–16 seconds with jitter, then mouseReleased. Preceded by smooth cubic-eased mouse 
+          movement from a random position to defeat motion fingerprinting.
+        </div>
+      </div>
+
+      <div class="d-card" style="padding:20px 24px;">
+        <div class="d-title" style="display:flex;align-items:center;gap:10px;font-size:14px;">
+          <span style="color:var(--green);font-family:var(--mono);">03</span>
+          Category filter false positives
+        </div>
+        <div class="d-desc" style="margin-top:6px;font-size:13px;">
+          Every page on the Commercial Observer site has "Office Leases" in the global navigation. Without 
+          decomposing nav/header/footer elements from the BeautifulSoup tree before checking, every article 
+          matched — 100% false positive rate. Solved by aggressive pre-filter decomposition of site chrome.
+        </div>
+      </div>
+
+      <div class="d-card" style="padding:20px 24px;">
+        <div class="d-title" style="display:flex;align-items:center;gap:10px;font-size:14px;">
+          <span style="color:var(--accent);font-family:var(--mono);">04</span>
+          URL deduplication robustness (Zillow)
+        </div>
+        <div class="d-desc" style="margin-top:6px;font-size:13px;">
+          Zillow URLs vary between runs — trailing slashes, query params, case differences. Matching on full 
+          URL strings caused the same listings to be scraped repeatedly. Switched to ZPID extraction via regex 
+          and set-based ZPID tracking. One canonical ID per property regardless of URL variation.
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ── FOOTER ── -->
+  <footer>
+    <p style="font-family:var(--mono);font-size:12px;color:var(--muted);margin-bottom:8px;">
+      Built for a commercial real estate intelligence company · Python · Selenium · Ubuntu
+    </p>
+    <p style="font-size:12px;color:var(--muted);">
+      Both scrapers are production-deployed and running on live data pipelines.
+    </p>
+  </footer>
+
+</div>
+
+</body>
+</html>
